@@ -1,16 +1,17 @@
 const route = require('express').Router()
+const multer = require('multer');
 const {checkAuthentication} = require('../middlewares/auth');
-import Product from "../controllers/productcontroller"
+const Product = require( "../controllers/productcontroller")
+
+const upload = multer({ dest: 'uploads/' })
 
 
 
 
-
-
-route.post('/create', checkAuthentication, Product.createProduct)
+route.post('/create', checkAuthentication,upload.single('file'), Product.createProduct)
 route.put('/update',  checkAuthentication,Product.updateProduct)
 route.delete('/delete', checkAuthentication, Product.deleteProduct)
-route.get('/findall',  checkAuthentication,Product.getAllProducts)
+route.get('/findall'     ,Product.getAllProducts)
 route.get('/findone',  checkAuthentication, Product.getProductById)
 
 

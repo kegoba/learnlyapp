@@ -1,11 +1,12 @@
-import User from "../services/userService"
+const userService = require("../services/userService")
 
 
- class  User{
+ class  userController{
   static async  register(req, res)  {
     try {
       const data = req.body;
-      const response = await User.register(data); 
+      
+      const response = await userService.register(data); 
       if (response.success) {
         res.status(200).json({ msg: "registration Succussful" });
       } else {
@@ -20,8 +21,8 @@ import User from "../services/userService"
   static async login(req, res){
     const { email, password } = req.body;
     try {
-      const response = await User.login(email, password);
-      return res.json({ response });
+      const token = await userService.login(email, password);
+      return res.json({ token });
     } catch (err) {
       res.status(400).json({ msg: err.message });
     }
@@ -32,7 +33,7 @@ import User from "../services/userService"
 
 
 
-export default User
+module.exports = userController
 
 
 

@@ -1,26 +1,33 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <home msg="Welcome to Your Vue.js App"/>
+  <div class="min-h-screen bg-gray-100">
+    <nav class="bg-blue-500 p-4">
+      <router-link to="/" class="text-white mr-4">Home</router-link>
+      <router-link to="/products" class="text-white mr-4">Products</router-link>
+      <router-link  v-if="!user" to="/login" class="text-white mr-4">Login</router-link>   
+      <router-link v-if="user" to="/create-product" class="text-white mr-4"> Create-Product</router-link>
+      <button v-if="user" @click="logout" class="text-white mr-4">Logout</button>
+      
+    </nav>
+    <router-view />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    home
+  computed: {
+    user() {
+      return this.$store.state.user;
+    }
+  },
+  methods: {
+    logout() {
+      this.$store.dispatch('logoutUser');
+      this.$router.push('/');
+    }
   }
-}
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+/* Add your global styles here */
 </style>

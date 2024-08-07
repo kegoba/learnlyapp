@@ -1,25 +1,20 @@
-const Product = require('../models/productModel');
+const ProductModel = require('../models/productModel');
 const path = require('path');
 
 class ProductService {
-  static async createProduct(data, file) {
-    if (file) {
+static async createProduct(data, file) {
+    if (file && file.path) {
       const imagePath = path.join('/uploads/', file.filename);
       data.imageURL = imagePath;
+      const product = new ProductModel(data);
+      return await product.save();
+    } else {
+      console.error('File or file path is undefined');
+      return "No data";
     }
-    const product = new Product(data);
-    return await product.save();
   }
-
-  static async getAllProducts(page, limit) {
-    const skip = (page - 1) * limit;
-    const products = await Product.find().populate('createdBy', 'username email').skip(skip).limit(limit);
-    const totalProducts = await Product.countDocuments();
-    return { products, totalPages: Math.ceil(totalProducts / limit), currentPage: page };
-  }
-
   static async getProductById(id) {
-    return await Product.findById(id).populate('createdBy', 'username email');
+    return await ProductModel.findById(id).populate('createdBy', 'username email');
   }
 
   static async updateProduct(id, data, file) {
@@ -27,11 +22,28 @@ class ProductService {
       const imagePath = path.join('/uploads/', file.filename);
       data.imageURL = imagePath;
     }
-    return await Product.findByIdAndUpdate(id, data, { new: true });
+    return await ProductModel.findByIdAndUpdate(id, data, { new: true });
   }
 
   static async deleteProduct(id) {
-    return await Product.findByIdAndDelete(id);
+    return await ProductModel.findByIdAndDelete(id);
+  }
+  static async getAllProducts(page = 1, limit = 10) {
+    try {
+      const skip = (page - 1) * limit;
+      const products = await ProductModel.find().skip(skip).limit(limit);
+      const totalProducts = await ProductModel.countDocuments();
+      const totalPages = Math.ceil(totalProducts / limit);
+
+      return {
+        products,
+        totalPages,
+        currentPage: page,
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      throw error;
+    }
   }
 }
 

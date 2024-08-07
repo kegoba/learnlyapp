@@ -8,37 +8,36 @@ const {
     passwordValidation,
     inputValidation,
   } = require("../helpFunction/validationService");
-const { getSingleUser } = require('../controllers/userController');
 
 
 
- class User {
+
+ class userService {
 
   static async login  (email, password)  {
     if (!emailValidation(email) || !passwordValidation(password)) {
-      throw new Error('Invalid Input');
+      return ('Invalid Input');
     }
 
     const userInfo = await UserModel.findOne({ email });
     if (!userInfo) {
-      throw new Error('User Not Found');
+
+      return ('User Not Found');
     }
   
-    const isPasswordCorrect = comparePassword(userInfo.password, password);
+    const isPasswordCorrect = await comparePassword(password , userInfo.password);
     if (!isPasswordCorrect) {
-      throw new Error('Invalid Password or Email');
+      return ('Invalid Password or Email');
     }
     const token = jwt.sign(
-      { id: userInfo._id, role: userInfo.role },
+      {createdBy: userInfo.id, role: userInfo.role },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
   
-    const data = {
-      token: token,
-    };
+    
   
-    return data;
+    return token;
   };
 
   static async register (data)  {
@@ -58,8 +57,8 @@ const { getSingleUser } = require('../controllers/userController');
       // Hash the password
       const hashedPassword = await hashPassword(data.password)
       // Create new user
-      const userInfo = new User({
-        name: data.username,
+      const userInfo = new UserModel({
+        username: data.username,
         email: data.email,
         password: hashedPassword
       });
@@ -77,7 +76,7 @@ const { getSingleUser } = require('../controllers/userController');
 }
 
 
-export default User
+module.exports = userService
           
 
 

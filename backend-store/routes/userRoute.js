@@ -1,15 +1,15 @@
 const route = require('express').Router()
-import User from "../controllers/userController"
+
+const userController = require("../controllers/userController")
 
 
 
 
 
+route.post('/register',  userController.register)
 
-route.post('/register',  User.register)
 
-
-route.post('/login', User.login) 
+route.post('/login', userController.login) 
 
 
 
