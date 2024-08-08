@@ -14,7 +14,6 @@ class ProductController {
           description: req.body.description,
           price: req.body.price
         };
-    
         // Pass data and file to the service method
         const product = await ProductService.createProduct(data, req.file);
     
